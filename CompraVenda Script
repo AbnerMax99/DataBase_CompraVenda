@@ -1,0 +1,418 @@
+/* Todos aqui são criaçoes de tabelas*/
+create table CLIENTE (
+	CLI_CODIGO serial not null,
+	PES_CODIGO serial not null,
+	CLI_LIMITECRED numeric (18,2)
+);
+
+create table PESSOA(
+	PES_CODIGO serial not null,
+	PES_NOME varchar(80) not null,
+	PES_FANTASIA varchar(80),
+	PES_FISICA char(1) not null,
+	PES_CPFCNPJ varchar(20) not null,
+	PES_RGIE varchar(20),
+	PES_CADASTRO date,
+	PES_ENDERECO varchar(120),
+	PES_NUMERO varchar(10),
+	PES_COMPLEMENTO varchar(30),
+	PES_BAIRRO varchar(50),
+	PES_CIDADE varchar(80),
+	PES_UF char(2),
+	PES_CEP varchar(9),
+	PES_FONE1 varchar(16),
+	PES_FONE2 varchar(16),
+	PES_CELULAR varchar(16),
+	PES_SITE varchar(200),
+	PES_EMAIL varchar(200),
+	PES_ATIVO char(1)
+);
+
+create table FORNECEDOR( 
+	FOR_CODIGO serial not null,
+	PES_CODIGO serial not null,
+	FOR_CONTATO varchar(80)
+);
+
+create table VENDA(
+	VDA_CODIGO serial not null,
+	USU_CODIGO serial not null,
+	CLI_CODIGO serial not null,
+	VDA_DATA date not null,
+	VDA_VALOR numeric(18,2),
+	VDA_DESCONTO numeric(18,2),
+	VDA_TOTAL numeric(18,2)
+);
+
+create table USUARIO( 
+	USU_CODIGO serial not null,
+	USU_NOME varchar(80),
+	USU_LOGIN varchar(20) not null,
+	USU_SENHA varchar(20),
+	USU_CADASTRO date,
+	USU_ATIVO char(1)
+);
+
+create table COMPRA(
+	CPR_CODIGO serial not null,
+	USU_CODIGO serial not null,
+	FOR_CODIGO serial not null,
+	CPR_EMISSAO date,
+	CPR_VALOR numeric(18,2),
+	CPR_DESCONTO numeric(18,2),
+	CPR_TOTAL numeric(18,2),
+	CPR_DTENTRADA date
+);
+
+create table VENDA_PAGTO(
+	VDP_CODIGO serial  not null,
+	VDA_CODIGO serial not null,
+	FPG_CODIGO serial not null,
+	VDP_VALOR numeric(18,2)
+);
+
+create table FORMAPAGTO(
+	FPG_CODIGO serial not null,
+	FPG_NOME varchar(80) not null,
+	FPG_ATIVO char(1)
+);
+
+create table VENDA_PRODUTO(
+	VEP_CODIGO serial not null,
+	VDA_CODIGO serial not null,
+	PRO_CODIGO serial not null,
+	VEP_QTDE numeric(14,4),
+	VEP_PRECO numeric(18,2),
+	VEP_DESCONTO numeric(18,2),
+	VEP_TOTAL numeric(18,2)
+);
+
+create table PRODUTO(
+	PRO_CODIGO serial not null,
+	PRO_NOME varchar(80) not null,
+	PRO_ESTOQUE numeric(14,4),
+	PRO_UNIDADE varchar(5),
+	PRO_PRECO numeric(18,2),
+	PRO_CUSTO numeric(18,2),
+	PRO_ATACADO numeric (18,2),
+	PRO_MIN numeric(14,4),
+	PRO_MAX numeric(14,4),
+	PRO_EMBALAGEM decimal(9,0),
+	PRO_PESO numeric(14,4),
+	PRO_CADASTRO date,
+	PRO_ATIVO char(1)
+);
+
+create table COMPRA_PRODUTO(
+	CPP_CODIGO serial  not null,
+	CPR_CODIGO  serial not null,
+	PRO_CODIGO  serial not null,
+	CPR_QTDE numeric(14,4) not null,
+	CPR_PRECO numeric(18,2) not null,
+	CPR_DESCONTO numeric(18,2),
+	CPR_TOTAL numeric(18,2)
+);
+
+
+/* AQUI ESTOU ATRIBUINDO AS CHAVES PRIMÁRIAS AS SEUS REPECTIVOS REGISTROS*/
+alter table CLIENTE add  primary key (CLI_CODIGO);
+alter table PESSOA add  primary key (PES_CODIGO);
+alter table FORNECEDOR add  primary key (FOR_CODIGO);
+alter table VENDA add  primary key (VDA_CODIGO);
+alter table USUARIO add  primary key (USU_CODIGO);
+alter table COMPRA add   primary key (CPR_CODIGO);
+alter table VENDA_PAGTO add  primary key (VDP_CODIGO);
+alter table FORMAPAGTO add  primary key (FPG_CODIGO);
+alter table VENDA_PRODUTO add  primary key (VEP_CODIGO);
+alter table PRODUTO add  primary key (PRO_CODIGO);
+alter table COMPRA_PRODUTO add  primary key (CPP_CODIGO);
+
+/* COLOCANDO AS CHAVES ESTRANGEIRAS EM CADA REGISTRO */
+ALTER TABLE cliente
+ADD CONSTRAINT PES_CODIGO FOREIGN KEY (PES_CODIGO)
+REFERENCES pessoa(PES_CODIGO);
+
+alter table fornecedor 
+add constraint PES_CODIGO foreign key (PES_CODIGO)
+references pessoa(PES_CODIGO);
+
+alter table VENDA 
+add constraint USU_CODIGO foreign key (USU_CODIGO)
+references USUARIO(USU_CODIGO);
+
+alter table VENDA 
+add constraint CLI_CODIGO foreign key (CLI_CODIGO)
+references CLIENTE(CLI_CODIGO);
+
+alter table COMPRA 
+add constraint USU_CODIGO foreign key (USU_CODIGO)
+references USUARIO(USU_CODIGO);
+
+alter table COMPRA 
+add constraint FOR_CODIGO foreign key (FOR_CODIGO)
+references FORNECEDOR(FOR_CODIGO);
+
+alter table VENDA_PAGTO 
+add constraint VDA_CODIGO foreign key (VDA_CODIGO)
+references VENDA(VDA_CODIGO);
+
+alter table VENDA_PAGTO 
+add constraint FPG_CODIGO foreign key (FPG_CODIGO)
+references FORMAPAGTO(FPG_CODIGO);
+
+alter table VENDA_PRODUTO 
+add constraint VDA_CODIGO foreign key (VDA_CODIGO)
+references VENDA(VDA_CODIGO);
+
+alter table VENDA_PRODUTO 
+add constraint PRO_CODIGO foreign key (PRO_CODIGO)
+references PRODUTO(PRO_CODIGO);
+
+alter table compra_produto  
+add constraint CPR_CODIGO foreign key (CPR_CODIGO)
+references COMPRA(CPR_CODIGO);
+
+alter table compra_produto  
+add constraint PRO_CODIGO foreign key (PRO_CODIGO)
+references PRODUTO(PRO_CODIGO);
+
+
+/* INSERINDO DADOS TABELA PESSOA, NAO ESTAO CERTO, MAS É DESTE MODO (OBS: NÃO HÁ TODOS) */
+
+insert into pessoa (pes_nome, pes_fantasia, pes_fisica, pes_cpfcnpj, pes_rgie, pes_cadastro, pes_endereco, pes_numero, pes_complemento, pes_bairro, pes_cidade, pes_uf, pes_cep, pes_fone1, pes_fone2, pes_celular, pes_site, pes_email, pes_ativo)
+values
+('Abner','AbnerCoorporation	','J','489.815.888.99'	,'38.965.044-4'	,'2023-07-02',	'Telezinho Gomes	','1-70'	,'apto'	,'Vitta	','Bauru'	,'SP',	'17023-831',	'0',	'0	','(14) 998555383',	'Nao tem'	,'abner_max@icloud.com','1'),
+('Graiden Herman',	'Suarez	','J','637.763.317-25'	,'52.131.293-4	','2024-07-27',	'8570 Velit Rd.'	,'22-88'	,'apto	','quila'	,'Contagem'	,'RJ',	'45686-985',	'(35)2475-4343',	'(39)2142-4957'	,'(12)98661-8936	','https://zoom.us'	,'bibendum.donec@icloud.com','1'),
+('Samuel Cannon'	,'Vincent	','F','642.021.264-83	','21.591.772-4'	,'2023-03-05',	'P.O. Box 413 2953 Tortor St.	','09-20'	,'casa'	,'Jordan	','Novo Hamburgov	','BA','30481-313',	'(22)7230-7658	','(72)4737-7266'	,'(42)96734-2734',	'http://guardian.co.uk	','lobortis.quam@hotmail.com','0'),
+('Uriah Mooney',	'Pitts	','J','327.484.745-56'	,'51.967.242-7	','2024-10-02','	4073 Felis. Rd.',	'80-76'	,'apto'	,'Hop'	,'Ponta Grossa'	,'BA','5871-451','	(77)8152-9861	','(71)5458-7548'	,'(24)91316-3114',	'http://instagram.com','	est.ac.mattis@outlook.com'	,'0'),
+('Wylie English','	George	','F','864.806.906-91'	,'26.517.862-3	','2023-09-17','	Ap #592-3102 Tincidunt Av.	','80-13	','casa	','Halla'	,'Caruaru'	,'PR',	'36172-281','	(91)4733-9968	','(41)4323-7355',	'(65)96229-4898	','http://nytimes.com'	,'mollis.duis.sit@icloud.com	','1'),
+('Rogan Hanson	','Wooten	','F','240.538.994-'	,'10.178.352-8	','2024-06-22',	'Ap #931-6275 Enim. St.	','07-18	','casa'	,'Kuame	','Marabá'	,'SC',	'23910-483',	'(05)6764-7540	','(69)4492-9715	','(00)95273-5948	','http://walmart.com	','ultricies.ornare@outlook.com'	,'1'),
+('Carolyn Daniel','	Beard'	,'J','132.244.902-32	','67.268.122-8	','2024-05-18',	'4465 Orci Street'	,'01-83'	,'apto'	,'Leslie'	,'Campos dos Goytacazes	','SC','30840-517',	'(90)4559-8316',	'(55)8627-2244'	,'(77)92964-0451','	http://youtube.com'	,'mauris.a@icloud.com'	,'0'),
+('Willa  Lynn	','Barlow'	,'F','271.478.610-52'	,'54.691.266-7	','2023-05-03',	'P.O. Box 250, 2722 Etiam Ave	','68-78'	,'apto	','Berk	','Recife'	,'PB',	'38315-017',	'(68)8463-8286',	'(81)5801-7587'	,'(26)92737-4645',	'http://twitter.com	','ac@outlook.com',	'0'),
+('Ivor Mcintyre',	'Gilliam'	,'J','462.720.113-24	','00.316.307-6	','2023-10-21',	'Ap #478-9022 A Rd.	','06-53'	,'casa	','Price	','Sobral	','PA',	'23922-476',	'(96)2908-8376'	,'(23)5270-4144	','(86)94428-6481'	,'http://cnn.com	','eleifend.cras@icloud.com',	'0'),
+('Byron Cole','Crosby'	,'F','476.158.283-07'	,'96.911.414-0'	,'2024-11-12',	'427-6282 Sed Road	','17-75	','apto	','Chase	','Diadema'	,'RS','45112-507',	'(79)4838-5622	','(43)5307-8132',	'(85)96214-4823',	'https://facebook.com	','aliquam@hotmail.com',	'0');
+
+/* DADOS TABELA CLIENTE */
+insert into cliente (cli_limitecred )
+values 
+(12345),
+(1000),
+(1500),
+(1300),
+(1500),
+(8000),
+(15200),
+(2892),
+(4086),
+(4960);
+
+/* DADOS TABELA FORNECEDOR */
+insert into fornecedor (for_contato)
+values 
+('(64)95471-6755'),
+('(34)95755-8140'),
+('(54)91645-5867'),
+('(57)94641-6840'),
+('(38)91640-1061'),
+('(67)98747-8953'),
+('(33)98240-9520'),
+('(50)97793-7621'),
+('(14)98139-6161'),
+('(93)91049-1781');
+
+/* DADOS TABELA USUARIO */	
+insert into usuario (usu_nome, usu_login, usu_senha, usu_cadastro, usu_ativo)
+values  
+('Danielle da Conceiçao',	'danielledaconceiao	','723MOLo',	'2024-05-24', '1'),
+('Eugenia Feitosa','	eugeniafeitosa',	'547GGMn	','2023-04-15', '1'),
+('Kylynn Moraes	','kylynnmoraes	','126EIIt',	'2022-12-07', '1'),
+('Abdul de Brito'	,'abduldebrito	','572HUPe',	'2023-09-15', '0'),
+('Xanthus Teles'	,'xanthusteles	','647PBZa',	'2024-06-19', '1'),
+('Kai Santos'	,'kaisantos	','331DKLj',	'2024-01-23', '0'),
+('Rae Leal'	,'raeleal	','711SICf',	'2024-05-07', '1'),
+('Beck Vieira'	,'beckvieira'	,'363GPOp','	2024-08-21', '1'),
+('Fuller da Rocha',	'fullerdarocha',	'774KPCc',	'2022-11-24', '0'),
+('Sierra Carneiro'	,'sierracarneiro'	,'770MOVg',	'2023-01-09', '1');
+
+/* DADOS TABELA VENDA */
+insert into venda (vda_data, vda_valor, vda_desconto)
+values 
+('2023-10-03',	1020, 10.2),	
+('2022-09-19',	838, 83.8),	
+('2024-02-19',	746, 74.6),	
+('2023-01-16',	332, 33.2),	
+('2023-12-31',	564, 56.4),	
+('2023-12-07',	403, 40.03),	
+('2023-06-14',	672, 67.2),
+('2023-08-06',	456, 45.6),
+('2024-03-05',	407, 40.7),
+('2022-09-12',	141, 14.1);
+
+/* TOTAL DO VALOR COM O DESCONTO */
+UPDATE venda 
+SET vda_total = vda_valor - vda_desconto;
+
+
+/* DADOS TABELA COMPRA */ /* ADICIONAR SOMENTE DESCONTO, TOTAL,ENTRADA*/
+insert into compra (cpr_emissao, cpr_valor, cpr_desconto, cpr_dtentrada)
+values 
+('2023-09-12',	985, 98.5, '2023-01-23'),	
+('2022-12-17',	169, 16.9, '2022-12-19'),		
+('2022-12-03',	140, 14, '2023-01-06'),		
+('2022-11-12',	431, 43.1, '2023-07-17'),		
+('2024-05-15',	251, 25.1, '2023-03-12'),		
+('2023-01-04',	857, 85.7, '2023-10-26'),	
+('2023-02-28',	841, 84.1, '2023-05-17'),			
+('2022-12-19',	645, 64.5, '2023-09-19'),		
+('2024-01-28',	310, 31, '2023-04-15'),		
+('2023-12-21',	299, 29.9, '2023-08-14');
+
+UPDATE COMPRA 
+SET cpr_total = cpr_valor - cpr_desconto;
+
+/* DADOS TABELA PRODUTO */  /* DUVIDAS UNIDADES PARA FRENTE*/
+insert into produto (pro_nome, pro_estoque, pro_unidade, pro_preco, pro_custo, pro_atacado ,pro_min, pro_max, pro_embalagem, pro_peso, pro_cadastro, pro_ativo)
+values 
+('Notebook',100,50,7000,5000,6500,5,100,100,5,'2023-01-11','S'),									
+('Celular',100,25,3000,1500,2500,5,100,100,5,'2023-02-12','S'),										
+('Livro	',100,10,70,35,60,5,100,100,5,'2023-03-13','S'),									
+('Fone',100,40,210,105,150,5,100,100,5,'2023-04-14','S'),									
+('Sofa',100,78,850,475,400,5,100,100,5,'2023-05-15','S'),								
+('Cama',100,85,1000,500,700,5,100,100,5,'2023-06-16','S'),									
+('Fogao',100,34,1400,700,6500,5,100,100,5,'2023-07-17','S'),									
+('Geladeira',100,65,2800,1400,6500,5,100,100,5,'2023-08-18','S'),								
+('Mesa',100,12,7000,600,300,5,100,100,5,'2023-09-19','S'),								
+('Cadeira',100,10,150,75,6500,5,100,100,5,'2023-10-20','S');								
+
+/*DADOS TABELA VENDA DE PRODUTO*/
+insert into venda_produto (vep_qtde, vep_preco, vep_desconto)
+values
+(4, 190, 19),
+(7, 849, 84.9),			
+(2, 889, 88.9),			
+(3, 973, 97.3),			
+(1, 137, 13.7),			
+(4, 506, 50.6),		
+(2, 432, 43.2),		
+(8, 161, 16.1),	
+(4, 715, 71.5),
+(6, 440, 44);
+
+/* CONTA DO VALOR TOTAL COM O DESCONTO */
+UPDATE venda_produto  
+SET vep_total  = vep_preco  * vep_qtde - vep_desconto ;
+
+insert into venda_pagto (vdp_valor)
+values
+(1009.80),
+(754.20),
+(671.40),
+(298.80),
+(507.60),
+(362.97),
+(604.80),
+(410.40),
+(366.30),
+(126.90);
+
+
+/* AQUI ESTOU ATRIBUINDO UM VALOR EM APENAS UM COLUNA, POIS ESQUECI ANTERIORMENTE */
+UPDATE venda_pagto /* UPTADE PARA A TABELA QUE QUERO ENTRAR */
+SET vdp_valor  = 1009.80 /* O VALOR A DEVIDA COLUNA */ 
+WHERE vdp_codigo  = 1; /* ESCOLHO INSERIOR EXCLUSIVAMENTO NO ID 1 */
+
+UPDATE venda_pagto 
+SET vdp_valor  = 754.20
+WHERE vdp_codigo  = 2;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 671.40
+WHERE vdp_codigo  = 3;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 298.80
+WHERE vdp_codigo  = 4;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 507.60
+WHERE vdp_codigo  = 5;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 362.97
+WHERE vdp_codigo  = 6;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 604.80
+WHERE vdp_codigo  = 7;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 410.40
+WHERE vdp_codigo  = 8;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 366.30
+WHERE vdp_codigo  = 9;
+
+UPDATE venda_pagto 
+SET vdp_valor  = 126.90
+WHERE vdp_codigo  = 10;
+
+
+/* DADOS TABELA FORMA DE PAGAMENTO */
+insert into formapagto (fpg_nome, fpg_ativo)
+values
+('Caesar Machado',0),
+('Jane de Freitas',0),
+('Matheus de Assis',1),
+('Ronaldo Sampaio',1),
+('Clarice Nascimento',0),
+('Claudia Cardoso',0),
+('Denna Vaz',1),
+('Flavio Nonato',1),
+('Francesca Morais',1),
+('Gabriel Batista',0);
+
+
+/* TABELA COMPRA DE PRODUTO */
+insert into compra_produto (cpr_qtde, cpr_preco, cpr_desconto)
+values 
+(7,208,20.8),			
+(9,514,51.4),			
+(3,393,39.3) ,			
+(2,177,17.7),			
+(7,368,36.8),			
+(7,213,21.3),			
+(5,231,23.1),			
+(8,717,71.7),			
+(10,170,7),			
+(5,928,92.8);	
+
+/* CALCULO DE TOTAL COM DESCONTO */
+UPDATE compra_produto  
+SET cpr_total  = cpr_preco  * cpr_qtde  - cpr_desconto;
+
+/* ESTOU ALTERANDO O VALOR DE VENDA - DA TABELA VENDA - DO CLIENTE 1 */
+update venda 
+set vda_valor = 1000
+where cli_codigo = 1;
+
+/*ALTERANDO O LIMITE DE CREDITO DO CLIENTE 1 */
+update cliente set cli_limitecred = 30
+where cli_codigo = 1;
+
+/*	REMOVENDO O DESCONTO DO CLIENTE 5	*/
+update venda_produto set vep_desconto = 0
+where vep_codigo = 5;
+
+update venda_produto set vep_qtde = 10
+where vep_codigo = 10;
+
+/*	AQUI TENTEI EXCLUIR O CLIENTE 1, MAS SEM SUCESSO, POIS ELE É UMA FOREIGN KEY DE OUTRA TABELA	*/
+delete from pessoa 
+where pes_codigo = 1;
+
+alter table produto 
+add column pro_tipo char(1);
+
+
+
